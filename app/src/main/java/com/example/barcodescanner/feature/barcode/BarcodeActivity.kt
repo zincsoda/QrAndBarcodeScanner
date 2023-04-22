@@ -46,10 +46,18 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
         private const val BARCODE_KEY = "BARCODE_KEY"
         private const val IS_CREATED = "IS_CREATED"
 
+        private const val IS_BARCODE_VALID = "IS_BARCODE_VALID"
+
         fun start(context: Context, barcode: Barcode, isCreated: Boolean = false) {
             val intent = Intent(context, BarcodeActivity::class.java).apply {
                 putExtra(BARCODE_KEY, barcode)
                 putExtra(IS_CREATED, isCreated)
+                if (barcode.text == "VALID") {
+                    putExtra(IS_BARCODE_VALID, true)
+                } else {
+                    putExtra(IS_BARCODE_VALID, false)
+                }
+
             }
             context.startActivity(intent)
         }
@@ -68,6 +76,10 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
 
     private val barcode by unsafeLazy {
         ParsedBarcode(originalBarcode)
+    }
+
+    private val isBarcodeValid by unsafeLazy {
+        intent?.getBooleanExtra(IS_BARCODE_VALID, false).orFalse()
     }
 
     private val clipboardManager by unsafeLazy {
@@ -183,7 +195,7 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
     }
 
     private fun handleButtonsClicked() {
-        button_edit_name.setOnClickListener { showEditBarcodeNameDialog() }
+//        button_edit_name.setOnClickListener { showEditBarcodeNameDialog() }
 
         button_search_on_web.setOnClickListener { searchBarcodeTextOnInternet() }
         button_add_to_calendar.setOnClickListener { addToCalendar() }
@@ -214,13 +226,13 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
         button_send_email_2.setOnClickListener { sendEmail(barcode.secondaryEmail) }
         button_send_email_3.setOnClickListener { sendEmail(barcode.tertiaryEmail) }
 
-        button_share_as_text.setOnClickListener { shareBarcodeAsText() }
-        button_copy.setOnClickListener { copyBarcodeTextToClipboard() }
-        button_search.setOnClickListener { searchBarcodeTextOnInternet() }
-        button_save_as_text.setOnClickListener { navigateToSaveBarcodeAsTextActivity() }
-        button_share_as_image.setOnClickListener { shareBarcodeAsImage() }
-        button_save_as_image.setOnClickListener { navigateToSaveBarcodeAsImageActivity() }
-        button_print.setOnClickListener { printBarcode() }
+//        button_share_as_text.setOnClickListener { shareBarcodeAsText() }
+//        button_copy.setOnClickListener { copyBarcodeTextToClipboard() }
+//        button_search.setOnClickListener { searchBarcodeTextOnInternet() }
+//        button_save_as_text.setOnClickListener { navigateToSaveBarcodeAsTextActivity() }
+//        button_share_as_image.setOnClickListener { shareBarcodeAsImage() }
+//        button_save_as_image.setOnClickListener { navigateToSaveBarcodeAsImageActivity() }
+//        button_print.setOnClickListener { printBarcode() }
     }
 
 
@@ -272,7 +284,7 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
             .subscribe(
                 { id ->
                     barcode.id = id
-                    button_edit_name.isVisible = true
+//                    button_edit_name.isVisible = true
                     toolbar?.menu?.findItem(R.id.item_delete)?.isVisible = true
                 },
                 { error ->
@@ -545,6 +557,7 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
         showBarcodeName()
         showBarcodeText()
         showBarcodeCountry()
+        showBarcodeValidation()
     }
 
     private fun showBarcodeMenuIfNeeded() {
@@ -617,7 +630,16 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
         text_view_barcode_text.text = if (isCreated) {
             barcode.text
         } else {
-            barcode.formattedText
+            "TEST"
+//            barcode.formattedText
+        }
+    }
+
+    private fun showBarcodeValidation() {
+        text_view_barcode_valid_text.text = if (isBarcodeValid) {
+            "Your coupon is VALID"
+        } else {
+            "Your coupon is NOT VALID"
         }
     }
 
@@ -656,15 +678,15 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
     }
 
     private fun showOrHideButtons() {
-        button_search.isVisible = isCreated.not()
-        button_edit_name.isVisible = barcode.isInDb
+//        button_search.isVisible = isCreated.not()
+//        button_edit_name.isVisible = barcode.isInDb
 
         if (isCreated) {
             return
         }
 
         button_search_on_web.isVisible = barcode.isProductBarcode
-        button_search.isVisible = barcode.isProductBarcode.not()
+//        button_search.isVisible = barcode.isProductBarcode.not()
 
         button_add_to_calendar.isVisible = barcode.schema == BarcodeSchema.VEVENT
         button_add_to_contacts.isVisible = barcode.schema == BarcodeSchema.VCARD || barcode.schema == BarcodeSchema.MECARD
