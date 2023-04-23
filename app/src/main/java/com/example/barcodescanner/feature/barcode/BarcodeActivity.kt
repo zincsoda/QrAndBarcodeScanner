@@ -45,7 +45,7 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
     companion object {
         private const val BARCODE_KEY = "BARCODE_KEY"
         private const val IS_CREATED = "IS_CREATED"
-
+//        private const val IS_SCANNED = "IS_SCANNED"
         private const val IS_BARCODE_VALID = "IS_BARCODE_VALID"
 
         fun start(context: Context, barcode: Barcode, isCreated: Boolean = false) {
@@ -630,8 +630,7 @@ class BarcodeActivity : BaseActivity(), DeleteConfirmationDialogFragment.Listene
         text_view_barcode_text.text = if (isCreated) {
             barcode.text
         } else {
-            "TEST"
-//            barcode.formattedText
+            barcode.formattedText
         }
     }
 
